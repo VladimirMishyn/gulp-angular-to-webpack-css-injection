@@ -1,16 +1,21 @@
 {
   "name": "gulp-angular-to-webpack-css-injection",
-  "version": "1.0.0",
-  "description": "Step in migrating from gulp generated project (by 'gulp-angular') to webpack4. Injecting all **/*.css files in coresponding angularJs-entities. Adding `import \"./filename.css\"` in the very begginig of file (controller, module, component)",
+  "version": "0.0.3",
+  "description": "Step in migration from gulp generated project (by 'gulp-angular') to webpack4. Injecting all **/*.css files in coresponding angularJs-entities. Adding `import \"./filename.css\"` in the very begginig of file (controller, module, component)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [
     "gulp-angular",
     "webpack4"
   ],
-  "author": "Volodymyr Mishyn",
+  "author": "Volodymyr Mishyn <pti.mishin@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VladimirMishyn/gulp-angular-to-webpack-css-injection.git"
+  },
   "license": "ISC",
   "devDependencies": {
     "glob": "^7.1.2",
