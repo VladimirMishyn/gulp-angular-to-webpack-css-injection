@@ -86,12 +86,13 @@ Function signature:
 * Public interface for creating and adding require css file to your project
 * @param entryPoint - string, entry point of your application
 * @param removeImports - boolean - remove import css statements in folder if needed
+* @param ignoreFiles - array - skip files while removing imports
 */
 module.exports.useRequire = (entryPoint, removeImports = false) => {
 //code
 };
 ```
-*Use with caution:* `removeImports = true` will remove all `import '%name%.css';` and `import "%name%.css";` from your source files.
+*Use with caution:* `removeImports = true` will remove all `import '%name%.css';` and `import "%name%.css";` from your source files. You can pass array of file names (or globs) to skip them while removing, like `src/app/vendor.js`.
 May be helpful if you are using [extract-text-webpack-plugin].
 Since [extract-text-webpack-plugin] only merges text chunks, some CSS duplication may occur.
 ### Result

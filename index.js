@@ -63,7 +63,7 @@ const injectionInPath = (definedPath, entities) => {
 * Removes all css imports in folder files
 * @param entryDir - entry directory
 */
-const removeAllCssImports = (entryDir) => {
+const removeAllCssImports = (entryDir, ignoreFiles) => {
     let jsGlob = entryDir + '/**/*.js';
     let options = {
         files: jsGlob,
@@ -71,6 +71,9 @@ const removeAllCssImports = (entryDir) => {
         from: cssImportRegExpArray,
         to: ''
     };
+    if (ignoreFiles){
+        options.ignore = ignoreFiles;
+    }
     try {
         const changes = replaceInFile.sync(options);
         if (changes.length > 0) {
@@ -104,14 +107,15 @@ const addImportToEntry = (entry) => {
 * Creates file with css require using context
 * @param entry 
 * @param removeImports - boolean - remove import css statements in folder if needed 
+* @param ignoreFiles - array - ignore this files
 */
-const useRequireContext = (entry, removeImports) => {
+const useRequireContext = (entry, removeImports, ignoreFiles) => {
     let unixPath = upathModule.normalize(entry);
     let parsedPath = path.parse(unixPath);
     let styles = parsedPath.dir + '/styles.index.js';
     if (!fs.existsSync(styles)) {
         if (removeImports) {
-            removeAllCssImports(parsedPath.dir);
+            removeAllCssImports(parsedPath.dir, ignoreFiles);
         }
         fs.writeFile(styles, requireCssCode, 'utf8', (err) => {
             if (err) throw err;
@@ -138,10 +142,11 @@ const useImports = (definedPath, angularJsEntitiesArray) => {
 * Public interface for creating and adding require css to your project
 * @param entryPoint - string, entry point of your application
 * @param removeImports - boolean - remove import css statements in folder if needed
+* @param ignoreFiles - array - skip files while removing imports
 */
-const useRequire = (entryPoint, removeImports = false) => {
+const useRequire = (entryPoint, removeImports = false, ignoreFiles) => {
     let entry = (entryPoint) ? entryPoint : 'src/app/index.module.js';
-    useRequireContext(entry, removeImports);
+    useRequireContext(entry, removeImports, ignoreFiles);
 }
 
 module.exports.useImports = useImports;
