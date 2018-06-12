@@ -2,6 +2,14 @@
 
 [![N|Solid](https://user-images.githubusercontent.com/35331661/37280452-2062eaa8-25ee-11e8-9546-0bdfec1c472f.png)](https://webpack.js.org/)
 
+
+# Important notice
+This module works, and sometimes it's helpful to have visiual representation of your css imports, according to your components. But it can be easily repalced by Webpack out of box functionality ```require.context```. Following code in your entry point does the thing:
+```
+const context = require.context('./', true, /\.css/); // true - include subdirctories
+context.keys().forEach(context);
+```
+However, this module can also handle this approach
 # Description:
 If you (like many of us) used [generator-gulp-angular] to scaffold your application, and desperate willing to switch to Webpack builder, sooner or later you will bump in *.css imports trouble.
 
@@ -25,11 +33,13 @@ If you (like many of us) used [generator-gulp-angular] to scaffold your applicat
     ├── package.json
     └── gulpfile.js
     
-And [Gulp] deals with your style files simply by concatenaiting them and injecting in `index.html` as `<link rel=stylesheet href=styles/app.css>`.
+And [Gulp] deals with your style files simply by concatenaiting them and injecting in `index.html` as `<link rel="stylesheet" href="styles/app.css">`.
 In [Webpack] you should handle styles by yourself, importing them where needed.
 In our project there are a lot of styles files that are in the directory with the corresponding component. It would take a long time to manually import styles into each file. Therefore, it was necessary to solve the optimization problem, for which the module was written.
+
+Works in two ways: **add imports to files** or **add file with require.context to your entry point**
 ```diff
-- NOTICE: works only for for next file namings style:
+- NOTICE: First approach works only for next file namings style:
 %name%.controller.js
 %name%.component.js
 %name%.module.js
@@ -48,22 +58,42 @@ $ npm install --save-dev gulp-angular-to-webpack-css-injection
 
 Require it in your Webpack configuration code or anywhere:
 ```
-const addCssImportsToJs = require('gulp-angular-to-webpack-css-injection');
+const cssInjection = require('gulp-angular-to-webpack-css-injection');
 ```
-And run it 
+And run it:
+**Add imports to files** 
 ```
-addCssImportsToJs('src/app');
+cssInjection.useImports('src/app');
 ```
 Function signature:
 ```
-//**
- * @param definedPath - string, your application folder, default 'src/app'
- * @param angularJsEntitiesArray - array, default ['component', 'controller',   *'module']
- */
-module.exports = (definedPath, angularJsEntitiesArray) => {
+/*
+* Public interface for injecting import css
+* @param definedPath - string, your application folder, default 'src/app'
+* @param angularJsEntitiesArray - array, default: ['component', 'controller', 'module']
+*/
+module.exports.useImports = (definedPath, angularJsEntitiesArray) => {
 //code
 };
 ```
+**Add import of require file to your entry point** 
+```
+cssInjection.useRequire('src/app/index.module.js', false);
+```
+Function signature:
+```
+/*
+* Public interface for creating and adding require css file to your project
+* @param entryPoint - string, entry point of your application
+* @param removeImports - boolean - remove import css statements in folder if needed
+*/
+module.exports.useRequire = (entryPoint, removeImports = false) => {
+//code
+};
+```
+*Use with caution:* `removeImports = true` will remove all `import '%name%.css';` and `import "%name%.css";` from your source files.
+May be helpful if you are using [extract-text-webpack-plugin].
+Since [extract-text-webpack-plugin] only merges text chunks, some CSS duplication may occur.
 ### Result
 Your source code changed from:
 ```
@@ -84,6 +114,8 @@ export class MainController {
 ```
 For future Webpack bundling flow.
 
+Or, after using **useRequire**: `styles.index.js` created and imported to your entry point;
+
 License
 ----
 
@@ -97,3 +129,4 @@ MIT
    [Gulp]: <http://gulpjs.com>
    [Webpack]: <https://webpack.js.org/>
    [generator-gulp-angular]: <https://github.com/Swiip/generator-gulp-angular>
+   [extract-text-webpack-plugin]: <https://www.npmjs.com/package/extract-text-webpack-plugin>
