@@ -64,7 +64,7 @@ const injectionInPath = (definedPath, entities) => {
 * @param entryDir - entry directory
 */
 const removeAllCssImports = (entryDir) => {
-    console.log(jsGlob);
+    let jsGlob = entryDir + '/**/*.js';
     let options = {
         files: jsGlob,
         encoding: 'utf8',
@@ -108,18 +108,18 @@ const addImportToEntry = (entry) => {
 const useRequireContext = (entry, removeImports) => {
     let unixPath = upathModule.normalize(entry);
     let parsedPath = path.parse(unixPath);
-    if (removeImports) {
-        removeAllCssImports(parsedPath.dir);
-    }
     let styles = parsedPath.dir + '/styles.index.js';
     if (!fs.existsSync(styles)) {
+        if (removeImports) {
+            removeAllCssImports(parsedPath.dir);
+        }
         fs.writeFile(styles, requireCssCode, 'utf8', (err) => {
             if (err) throw err;
             console.log(`${styles} saved`);
             addImportToEntry(entry);
         });
     } else {
-        console.log(`${styles} file already exists!`);
+        console.log(`${styles} file already exists! No replaces were processed!`);
     }
 };
 
